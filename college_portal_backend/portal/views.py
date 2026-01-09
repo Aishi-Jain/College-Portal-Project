@@ -1,0 +1,118 @@
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from .models import Student, Faculty
+
+# LOGIN VIEW
+def login_view(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            return redirect('dashboard')
+        else:
+            return render(request, 'login.html', {'error': 'Invalid credentials'})
+
+    return render(request, 'login.html')
+
+
+# DASHBOARD REDIRECT (ROLE CHECK)
+@login_required
+def dashboard_redirect(request):
+    user = request.user
+
+    if user.is_superuser:
+        return redirect('admin_dashboard')
+
+    if hasattr(user, 'faculty'):
+        return redirect('faculty_dashboard')
+
+    if hasattr(user, 'student'):
+        return redirect('student_dashboard')
+
+    return redirect('login')
+
+
+# ADMIN DASHBOARD
+@login_required
+def admin_dashboard(request):
+    return render(request, 'admin_dashboard.html')
+
+
+# FACULTY DASHBOARD
+@login_required
+def faculty_dashboard(request):
+    return render(request, 'faculty_dashboard.html')
+
+
+# STUDENT DASHBOARD
+@login_required
+def student_dashboard(request):
+    return render(request, 'student_dashboard.html')
+
+
+# LOGOUT
+def logout_view(request):
+    logout(request)
+    return redirect('login')
+
+import csv
+from django.http import HttpResponse
+from django.contrib.auth.models import User
+from django.db import IntegrityError
+from .models import Student
+
+@login_required
+def upload_students(request):
+    if not request.user.is_superuser:
+        return redirect('login')
+
+    if request.method == 'POST':
+        csv_file = request.FILES['file']
+        decoded_file = csv_file.read().decode('utf-8').splitlines()
+        reader = csv.DictReader(decoded_file)
+
+        created = 0
+        skipped = 0
+
+        for row in reader:
+            username = row['username']
+
+            # ✅ CHECK IF USER ALREADY EXISTS
+            if User.objects.filter(username=username).exists():
+                skipped += 1
+                continue
+
+            # CREATE USER
+            user = User.objects.create_user(
+                username=username,
+                password=row['password']
+            )
+
+            # CREATE STUDENT PROFILE
+            Student.objects.create(
+                user=user,
+                roll_number=row['roll_number'],
+                department=row['department'],
+                year=row['year'],
+                section=row['section']
+            )
+
+            created += 1
+
+        return HttpResponse(
+            f"Upload complete. Created: {created}, Skipped (already exists): {skipped}"
+        )
+
+    return render(request, 'upload_students.html')
+
+@login_required
+def trigger_seating(request):
+    if not request.user.is_superuser:
+        return redirect('login')
+
+    return HttpResponse("Seating algorithm triggered (logic will be added in Phase 4)")
