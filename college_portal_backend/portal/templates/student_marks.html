@@ -1,0 +1,20 @@
+<h1>My Marks</h1>
+
+{% if marks %}
+<table border="1" cellpadding="8">
+    <tr>
+        <th>Subject</th>
+        <th>Marks</th>
+    </tr>
+    {% for m in marks %}
+    <tr>
+        <td>{{ m.subject }}</td>
+        <td>{{ m.marks }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>No marks uploaded yet.</p>
+{% endif %}
+
+<a href="/student-dashboard/">Back</a>

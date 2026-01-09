@@ -231,3 +231,33 @@ def faculty_add_circular(request):
         return redirect('faculty_circulars')
 
     return render(request, 'faculty_add_circular.html')
+
+@login_required
+def student_seating_view(request):
+    if not hasattr(request.user, 'student'):
+        return redirect('login')
+
+    allocation = SeatingArrangement.objects.filter(
+        student=request.user.student
+    ).first()
+
+    return render(
+        request,
+        'student_seating.html',
+        {'allocation': allocation}
+    )
+
+@login_required
+def student_marks_view(request):
+    if not hasattr(request.user, 'student'):
+        return redirect('login')
+
+    marks = Marks.objects.filter(
+        student=request.user.student
+    )
+
+    return render(
+        request,
+        'student_marks.html',
+        {'marks': marks}
+    )

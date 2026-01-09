@@ -1,0 +1,10 @@
+<h1>My Seating Allocation</h1>
+
+{% if allocation %}
+    <p><strong>Room:</strong> {{ allocation.classroom.room_number }}</p>
+    <p><strong>Seat Number:</strong> {{ allocation.seat_number }}</p>
+{% else %}
+    <p>Seating allocation not available yet.</p>
+{% endif %}
+
+<a href="/student-dashboard/">Back</a>
