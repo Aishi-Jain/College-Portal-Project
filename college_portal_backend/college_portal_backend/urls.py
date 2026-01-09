@@ -13,5 +13,7 @@ urlpatterns = [
     path('upload-students/', views.upload_students, name='upload_students'),
     path('trigger-seating/', views.trigger_seating, name='trigger_seating'),
     path('allocate-seating/', views.allocate_seating, name='allocate_seating'),
+    path('faculty/seating/', views.faculty_seating_view, name='faculty_seating'),
+    path('faculty/circulars/add/', views.faculty_add_circular, name='faculty_add_circular'),
 ]
 

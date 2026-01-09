@@ -191,3 +191,43 @@ def allocate_seating(request):
                 student_index += 1
 
     return HttpResponse("Seating Allocation Completed Successfully")
+
+from .models import SeatingArrangement
+
+@login_required
+def faculty_seating_view(request):
+    if not hasattr(request.user, 'faculty'):
+        return redirect('login')
+
+    allocations = SeatingArrangement.objects.select_related(
+        'student', 'classroom'
+    ).order_by('classroom__room_number', 'seat_number')
+
+    return render(
+        request,
+        'faculty_seating.html',
+        {'allocations': allocations}
+    )
+
+from django.utils import timezone
+
+@login_required
+def faculty_add_circular(request):
+    if not hasattr(request.user, 'faculty'):
+        return redirect('login')
+
+    if request.method == 'POST':
+        title = request.POST['title']
+        description = request.POST['description']
+        file = request.FILES.get('file')
+
+        Circular.objects.create(
+            title=title,
+            description=description,
+            file=file,
+            created_at=timezone.now()
+        )
+
+        return redirect('faculty_circulars')
+
+    return render(request, 'faculty_add_circular.html')

@@ -1,0 +1,22 @@
+<h1>Seating Arrangement</h1>
+
+<table border="1" cellpadding="8">
+    <tr>
+        <th>Room</th>
+        <th>Seat No</th>
+        <th>Roll Number</th>
+        <th>Student Name</th>
+    </tr>
+
+    {% for a in allocations %}
+    <tr>
+        <td>{{ a.classroom.room_number }}</td>
+        <td>{{ a.seat_number }}</td>
+        <td>{{ a.student.roll_number }}</td>
+        <td>{{ a.student.user.username }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<br>
+<a href="/faculty-dashboard/">Back</a>
