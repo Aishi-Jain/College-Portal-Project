@@ -211,7 +211,42 @@ def faculty_seating_view(request):
 
 from django.utils import timezone
 
+from .models import Marks, Student
+
 @login_required
+def faculty_add_marks(request):
+    if not hasattr(request.user, 'faculty'):
+        return redirect('login')
+
+    message = ""
+
+    if request.method == 'POST':
+        roll = request.POST['roll']
+        subject = request.POST['subject']
+        marks_value = request.POST['marks']
+
+        try:
+            student = Student.objects.get(roll_number=roll)
+
+            Marks.objects.update_or_create(
+                student=student,
+                subject=subject,
+                defaults={'marks': marks_value}
+            )
+
+            message = "Marks saved successfully"
+
+        except Student.DoesNotExist:
+            message = "Student with this roll number does not exist"
+
+    return render(
+        request,
+        'faculty_add_marks.html',
+        {'message': message}
+    )
+
+
+''' @login_required
 def faculty_add_circular(request):
     if not hasattr(request.user, 'faculty'):
         return redirect('login')
@@ -230,7 +265,7 @@ def faculty_add_circular(request):
 
         return redirect('faculty_circulars')
 
-    return render(request, 'faculty_add_circular.html')
+    return render(request, 'faculty_add_circular.html') '''
 
 @login_required
 def student_seating_view(request):

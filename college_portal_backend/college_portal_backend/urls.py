@@ -14,7 +14,8 @@ urlpatterns = [
     path('trigger-seating/', views.trigger_seating, name='trigger_seating'),
     path('allocate-seating/', views.allocate_seating, name='allocate_seating'),
     path('faculty/seating/', views.faculty_seating_view, name='faculty_seating'),
-    path('faculty/circulars/add/', views.faculty_add_circular, name='faculty_add_circular'),
+    path('faculty/marks/', views.faculty_add_marks, name='faculty_add_marks'),
+    #path('faculty/circulars/add/', views.faculty_add_circular, name='faculty_add_circular'),
     path('student/seating/', views.student_seating_view, name='student_seating'),
     path('student/marks/', views.student_marks_view, name='student_marks'),
 ]
