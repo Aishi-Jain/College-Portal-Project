@@ -116,3 +116,78 @@ def trigger_seating(request):
         return redirect('login')
 
     return HttpResponse("Seating algorithm triggered (logic will be added in Phase 4)")
+
+''' import re
+
+def roll_sort_key(roll):
+    """
+    Converts roll number into sortable components.
+    Example:
+    22Q91A6601 → (6601, '')
+    22Q91A66A3 → (6699, 'A3')
+    """
+    tail = roll[-4:]
+
+    if tail.isdigit():
+        return (int(tail), '')
+    else:
+        number = int(tail[:2])
+        letter_part = tail[2:]
+        return (number + 100, letter_part) '''
+
+import re
+
+def roll_sort_key(roll):
+    """
+    Ensures order:
+    6601–6699 first
+    then A0–J0
+    """
+
+    suffix = roll[-4:]  # last 4 characters
+
+    # Case 1: purely numeric (6601–6699)
+    if suffix.isdigit():
+        return (0, int(suffix))
+
+    # Case 2: alphanumeric (A0–J0)
+    letter = suffix[2]      # A, B, C...
+    digit = int(suffix[3]) # 0–9
+
+    return (1, ord(letter), digit)
+
+
+from .models import Student, Classroom, SeatingArrangement
+from django.http import HttpResponse
+from django.db import transaction
+
+@login_required
+def allocate_seating(request):
+    if not request.user.is_superuser:
+        return redirect('login')
+
+    students = list(Student.objects.all())
+    classrooms = Classroom.objects.all().order_by('room_number')
+
+    # Sort students using custom roll logic
+    students.sort(key=lambda s: roll_sort_key(s.roll_number))
+
+    SeatingArrangement.objects.all().delete()  # clear old allocations
+
+    student_index = 0
+
+    with transaction.atomic():
+        for classroom in classrooms:
+            for seat in range(1, classroom.capacity + 1):
+                if student_index >= len(students):
+                    break
+
+                SeatingArrangement.objects.create(
+                    student=students[student_index],
+                    classroom=classroom,
+                    seat_number=seat
+                )
+
+                student_index += 1
+
+    return HttpResponse("Seating Allocation Completed Successfully")
