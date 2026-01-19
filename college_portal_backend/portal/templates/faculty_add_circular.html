@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Circular{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>Add New Circular</h2>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <label>Title</label>
+        <input type="text" name="title" required>
+
+        <br><br>
+
+        <label>Description</label>
+        <textarea name="description" rows="4" required></textarea>
+
+        <br><br>
+
+        <label>Expiry Date</label>
+        <input type="date" name="expiry_date" required>
+        
+        <br><br>
+
+        <label>Attachment (optional)</label>
+        <input type="file" name="file">
+
+        <br><br>
+
+        <button type="submit">Publish Circular</button>
+    </form>
+</div>
+{% endblock %}

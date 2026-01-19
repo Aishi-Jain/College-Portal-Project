@@ -1,8 +1,30 @@
-<h1>Faculty Dashboard</h1>
+{% extends 'base.html' %}
 
-<ul>
-    <li><a href="/faculty/seating/">View Seating Plan</a></li>
-    <li><a href="/faculty/marks/">Upload Marks</a></li>
-</ul>
+{% block title %}Faculty Dashboard{% endblock %}
 
-<a href="/logout/">Logout</a>
+{% block content %}
+<h2>Welcome, {{ request.user.username }}</h2>
+<p style="color:#64748B;">Manage academic activities and student information.</p>
+
+<div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; margin-top: 24px;">
+
+    <div class="card">
+        <h3>Seating Plan</h3>
+        <p>View room-wise student seating arrangements.</p>
+        <a href="/faculty/seating/">View Seating →</a>
+    </div>
+
+    <div class="card">
+        <h3>Upload Marks</h3>
+        <p>Enter or update student marks subject-wise.</p>
+        <a href="/faculty/marks/">Upload Marks →</a>
+    </div>
+
+    <div class="card">
+        <h3>Circulars</h3>
+        <p>View and publish official circulars.</p>
+        <a href="/faculty/circulars/">Manage Circulars →</a>
+    </div>
+
+</div>
+{% endblock %}

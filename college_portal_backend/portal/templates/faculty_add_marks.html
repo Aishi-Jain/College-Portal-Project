@@ -1,19 +1,39 @@
-<h1>Upload Marks</h1>
+{% extends 'base.html' %}
 
-{% if message %}
-    <p><strong>{{ message }}</strong></p>
-{% endif %}
+{% block title %}Upload Marks{% endblock %}
 
-<form method="post">
-    {% csrf_token %}
+{% block content %}
+<div class="card">
+    <h2>Upload Student Marks</h2>
+    <p style="color:#64748B;">
+        Enter student roll number and subject to upload or update marks.
+    </p>
 
-    <input type="text" name="roll" placeholder="Student Roll Number" required><br><br>
+    {% if message %}
+        <p style="margin-top:16px; color:#16A34A;">
+            {{ message }}
+        </p>
+    {% endif %}
 
-    <input type="text" name="subject" placeholder="Subject Name" required><br><br>
+    <form method="post" style="margin-top:24px;">
+        {% csrf_token %}
 
-    <input type="number" name="marks" placeholder="Marks" required><br><br>
+        <label>Roll Number</label>
+        <input type="text" name="roll" placeholder="22Q91A66XX" required>
 
-    <button type="submit">Save Marks</button>
-</form>
+        <br><br>
 
-<a href="/faculty-dashboard/">Back</a>
+        <label>Subject</label>
+        <input type="text" name="subject" placeholder="Subject Name" required>
+
+        <br><br>
+
+        <label>Marks</label>
+        <input type="number" name="marks" placeholder="Enter marks" required>
+
+        <br><br>
+
+        <button type="submit">Save Marks</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,22 +1,37 @@
-<h1>Seating Arrangement</h1>
+{% extends 'base.html' %}
 
-<table border="1" cellpadding="8">
-    <tr>
-        <th>Room</th>
-        <th>Seat No</th>
-        <th>Roll Number</th>
-        <th>Student Name</th>
-    </tr>
+{% block title %}Seating Plan{% endblock %}
 
-    {% for a in allocations %}
-    <tr>
-        <td>{{ a.classroom.room_number }}</td>
-        <td>{{ a.seat_number }}</td>
-        <td>{{ a.student.roll_number }}</td>
-        <td>{{ a.student.user.username }}</td>
-    </tr>
-    {% endfor %}
-</table>
+{% block content %}
+<h2>Seating Arrangement</h2>
+<p style="color:#64748B;">Room-wise seating allocation for examinations</p>
 
-<br>
-<a href="/faculty-dashboard/">Back</a>
+{% if allocations %}
+    <div class="card">
+        <table>
+            <thead>
+                <tr>
+                    <th>Room</th>
+                    <th>Seat No</th>
+                    <th>Roll Number</th>
+                    <th>Student</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for a in allocations %}
+                <tr>
+                    <td>{{ a.classroom.room_number }}</td>
+                    <td>{{ a.seat_number }}</td>
+                    <td>{{ a.student.roll_number }}</td>
+                    <td>{{ a.student.user.username }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="card">
+        <p>No seating allocation available.</p>
+    </div>
+{% endif %}
+{% endblock %}

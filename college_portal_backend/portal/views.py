@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from .models import Student, Faculty, Marks, Circular
+from .models import Student, Faculty, Marks, Circular, SeatingArrangement
 
 # LOGIN VIEW
 def login_view(request):
@@ -245,8 +245,19 @@ def faculty_add_marks(request):
         {'message': message}
     )
 
+@login_required
+def faculty_circulars(request):
+    if not hasattr(request.user, 'faculty'):
+        return redirect('login')
 
-''' @login_required
+    circulars = Circular.objects.all().order_by('-created_at')
+    return render(
+        request,
+        'faculty_circulars.html',
+        {'circulars': circulars}
+    )
+
+@login_required
 def faculty_add_circular(request):
     if not hasattr(request.user, 'faculty'):
         return redirect('login')
@@ -254,18 +265,20 @@ def faculty_add_circular(request):
     if request.method == 'POST':
         title = request.POST['title']
         description = request.POST['description']
+        expiry_date = request.POST['expiry_date']
         file = request.FILES.get('file')
 
         Circular.objects.create(
             title=title,
             description=description,
-            file=file,
-            created_at=timezone.now()
+            expiry_date=expiry_date,
+            file=file
         )
 
-        return redirect('faculty_circulars')
+        return redirect('/faculty/circulars/')
 
-    return render(request, 'faculty_add_circular.html') '''
+    return render(request, 'faculty_add_circular.html')
+
 
 @login_required
 def student_seating_view(request):
