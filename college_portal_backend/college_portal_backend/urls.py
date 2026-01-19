@@ -18,5 +18,7 @@ urlpatterns = [
     #path('faculty/circulars/add/', views.faculty_add_circular, name='faculty_add_circular'),
     path('student/seating/', views.student_seating_view, name='student_seating'),
     path('student/marks/', views.student_marks_view, name='student_marks'),
+    path('student/circulars/', views.student_circulars, name='student_circulars'),
+
 ]
 

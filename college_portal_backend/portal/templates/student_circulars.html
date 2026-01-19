@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Circulars{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>Latest Circulars</h2>
+    <p style="color:#64748B;">Official announcements and notices</p>
+
+    {% if circulars %}
+        <div style="margin-top: 16px;">
+            {% for c in circulars %}
+                <div style="padding:16px 0; border-bottom:1px solid #E2E8F0;">
+                    <h4 style="margin:0;">{{ c.title }}</h4>
+                    <p style="margin:8px 0; color:#475569;">
+                        {{ c.description }}
+                    </p>
+
+                    {% if c.file %}
+                        <a href="{{ c.file.url }}">Download attachment →</a>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p style="margin-top:16px;">No circulars available.</p>
+    {% endif %}
+</div>
+{% endblock %}

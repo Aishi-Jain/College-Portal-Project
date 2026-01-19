@@ -1,8 +1,30 @@
-<h1>Student Dashboard</h1>
+{% extends 'base.html' %}
 
-<ul>
-    <li><a href="/student/seating/">My Seating Allocation</a></li>
-    <li><a href="/student/marks/">My Marks</a></li>
-</ul>
+{% block title %}Student Dashboard{% endblock %}
 
-<a href="/logout/">Logout</a>
+{% block content %}
+<h2>Welcome, {{ request.user.username }}</h2>
+<p style="color:#64748B;">Access your academic information below.</p>
+
+<div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; margin-top: 24px;">
+
+    <div class="card">
+        <h3>Seating Allocation</h3>
+        <p>View your exam hall and seat number.</p>
+        <a href="/student/seating/">View Seating →</a>
+    </div>
+
+    <div class="card">
+        <h3>Marks</h3>
+        <p>Check your subject-wise marks.</p>
+        <a href="/student/marks/">View Marks →</a>
+    </div>
+
+    <div class="card">
+        <h3>Circulars</h3>
+        <p>Read latest announcements.</p>
+        <a href="/student/circulars/">View Circulars →</a>
+    </div>
+
+</div>
+{% endblock %}

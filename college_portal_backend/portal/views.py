@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from .models import Student, Faculty
+from .models import Student, Faculty, Marks, Circular
 
 # LOGIN VIEW
 def login_view(request):
@@ -296,3 +296,11 @@ def student_marks_view(request):
         'student_marks.html',
         {'marks': marks}
     )
+
+@login_required
+def student_circulars(request):
+    if not hasattr(request.user, 'student'):
+        return redirect('login')
+
+    circulars = Circular.objects.all().order_by('-id')
+    return render(request, 'student_circulars.html', {'circulars': circulars})

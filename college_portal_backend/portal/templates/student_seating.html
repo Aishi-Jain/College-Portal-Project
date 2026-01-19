@@ -1,10 +1,16 @@
-<h1>My Seating Allocation</h1>
+{% extends 'base.html' %}
 
-{% if allocation %}
-    <p><strong>Room:</strong> {{ allocation.classroom.room_number }}</p>
-    <p><strong>Seat Number:</strong> {{ allocation.seat_number }}</p>
-{% else %}
-    <p>Seating allocation not available yet.</p>
-{% endif %}
+{% block title %}My Seating{% endblock %}
 
-<a href="/student-dashboard/">Back</a>
+{% block content %}
+<div class="card">
+    <h2>My Seating Allocation</h2>
+
+    {% if allocation %}
+        <p><strong>Room:</strong> {{ allocation.classroom.room_number }}</p>
+        <p><strong>Seat Number:</strong> {{ allocation.seat_number }}</p>
+    {% else %}
+        <p>Seating allocation not available yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

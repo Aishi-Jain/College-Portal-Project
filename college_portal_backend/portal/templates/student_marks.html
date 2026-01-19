@@ -1,20 +1,31 @@
-<h1>My Marks</h1>
+{% extends 'base.html' %}
 
-{% if marks %}
-<table border="1" cellpadding="8">
-    <tr>
-        <th>Subject</th>
-        <th>Marks</th>
-    </tr>
-    {% for m in marks %}
-    <tr>
-        <td>{{ m.subject }}</td>
-        <td>{{ m.marks }}</td>
-    </tr>
-    {% endfor %}
-</table>
-{% else %}
-<p>No marks uploaded yet.</p>
-{% endif %}
+{% block title %}My Marks{% endblock %}
 
-<a href="/student-dashboard/">Back</a>
+{% block content %}
+<div class="card">
+    <h2>My Marks</h2>
+    <p style="color:#64748B;">Subject-wise academic performance</p>
+
+    {% if marks %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Marks</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for m in marks %}
+                <tr>
+                    <td>{{ m.subject }}</td>
+                    <td>{{ m.marks }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p style="margin-top:16px;">No marks uploaded yet.</p>
+    {% endif %}
+</div>
+{% endblock %}
