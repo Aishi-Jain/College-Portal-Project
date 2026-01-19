@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h2 class="page-title">Seating Arrangement</h2>
+<p class="page-subtitle">Room-wise seating allocation for examinations</p>
+
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Room</th>
+                <th>Seat No</th>
+                <th>Roll Number</th>
+                <th>Student</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for a in allocations %}
+            <tr>
+                <td>{{ a.classroom.room_number }}</td>
+                <td>{{ a.seat_number }}</td>
+                <td>{{ a.student.roll_number }}</td>
+                <td>{{ a.student.user.username }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4">No seating allocation available.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

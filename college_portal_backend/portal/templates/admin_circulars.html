@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Circulars{% endblock %}
+
+{% block content %}
+<h2>College Circulars</h2>
+<p style="color:#64748B;">View and publish official announcements</p>
+
+<div style="margin:16px 0;">
+    <a href="{% url 'admin_add_circulars' %}">
+        <button>+ Add Circular</button>
+    </a>
+</div>
+
+{% if circulars %}
+    {% for c in circulars %}
+        <div class="card">
+            <h3>{{ c.title }}</h3>
+            <p>{{ c.description }}</p>
+
+            {% if c.file %}
+                <a href="{{ c.file.url }}">Download attachment →</a>
+            {% endif %}
+        </div>
+    {% endfor %}
+{% else %}
+    <div class="card">
+        <p>No circulars available.</p>
+    </div>
+{% endif %}
+{% endblock %}

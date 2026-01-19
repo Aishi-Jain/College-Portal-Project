@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Circular{% endblock %}
+
+{% block content %}
+<h2>Add Circular</h2>
+<p style="color:#64748B;">Publish a new official announcement</p>
+
+<div class="card" style="max-width:800px; margin-top:24px;">
+    <form method="post">
+        {% csrf_token %}
+
+        <label>Title</label>
+        <input type="text" name="title" required>
+
+        <br><br>
+
+        <label>Content</label>
+        <textarea name="content" rows="4" required></textarea>
+
+        <br><br>
+
+        <label>Expiry Date</label>
+        <input type="date" name="expiry_date" required>
+
+        <br><br>
+
+        <button type="submit">Publish Circular</button>
+    </form>
+</div>
+
+<div style="margin-top:24px;">
+    <a href="{% url 'admin_circulars' %}">← Back to Circulars</a>
+</div>
+{% endblock %}

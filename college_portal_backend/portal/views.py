@@ -3,6 +3,33 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .models import Student, Faculty, Marks, Circular, SeatingArrangement
 
+def generate_seating_allocation():
+    """
+    Pure seating allocation logic.
+    NO request, NO decorators.
+    """
+    SeatingArrangement.objects.all().delete()
+
+    students = Student.objects.order_by('roll_number')
+    classrooms = Classroom.objects.all().order_by('room_number')
+
+    seat_counter = 0
+    student_index = 0
+
+    for classroom in classrooms:
+        for seat in range(1, classroom.capacity + 1):
+            if student_index >= students.count():
+                return
+
+            SeatingArrangement.objects.create(
+                classroom=classroom,
+                student=students[student_index],
+                seat_number=seat
+            )
+
+            student_index += 1
+
+
 # LOGIN VIEW
 def login_view(request):
     if request.method == 'POST':
@@ -71,44 +98,54 @@ def upload_students(request):
     if not request.user.is_superuser:
         return redirect('login')
 
+    message = None
+
     if request.method == 'POST':
-        csv_file = request.FILES['file']
-        decoded_file = csv_file.read().decode('utf-8').splitlines()
-        reader = csv.DictReader(decoded_file)
 
-        created = 0
-        skipped = 0
+        # -------------------------------
+        # CASE 1: CSV UPLOAD
+        # -------------------------------
+        if 'file' in request.FILES:
+            csv_file = request.FILES['file']
+            decoded_file = csv_file.read().decode('utf-8').splitlines()
+            reader = csv.DictReader(decoded_file)
 
-        for row in reader:
-            username = row['username']
+            created = 0
+            skipped = 0
 
-            # ✅ CHECK IF USER ALREADY EXISTS
-            if User.objects.filter(username=username).exists():
-                skipped += 1
-                continue
+            for row in reader:
+                username = row['username']
 
-            # CREATE USER
-            user = User.objects.create_user(
-                username=username,
-                password=row['password']
-            )
+                if User.objects.filter(username=username).exists():
+                    skipped += 1
+                    continue
 
-            # CREATE STUDENT PROFILE
-            Student.objects.create(
-                user=user,
-                roll_number=row['roll_number'],
-                department=row['department'],
-                year=row['year'],
-                section=row['section']
-            )
+                user = User.objects.create_user(
+                    username=username,
+                    password=row['password']
+                )
 
-            created += 1
+                Student.objects.create(
+                    user=user,
+                    roll_number=row['roll_number'],
+                    department=row['department'],
+                    year=row['year'],
+                    section=row['section']
+                )
 
-        return HttpResponse(
-            f"Upload complete. Created: {created}, Skipped (already exists): {skipped}"
-        )
+                created += 1
 
-    return render(request, 'upload_students.html')
+            message = f"Upload complete. Created: {created}, Skipped: {skipped}"
+
+        # -------------------------------
+        # CASE 2: GENERATE SEATING
+        # -------------------------------
+        elif 'generate_seating' in request.POST:
+            generate_seating_allocation()
+            message = "Seating allocation generated successfully."
+
+    return render(request, 'upload_students.html', {'message': message})
+
 
 @login_required
 def trigger_seating(request):
@@ -193,6 +230,69 @@ def allocate_seating(request):
     return HttpResponse("Seating Allocation Completed Successfully")
 
 from .models import SeatingArrangement
+
+@login_required
+def admin_seating_view(request):
+    if not request.user.is_superuser:
+        return redirect('login')
+
+    allocations = SeatingArrangement.objects.select_related(
+        'student', 'classroom'
+    ).order_by('classroom__room_number', 'seat_number')
+
+    return render(request, 'admin_seating.html', {
+        'allocations': allocations
+    })
+
+@login_required
+def admin_circulars(request):
+    # 🔐 Only admins allowed
+    if not request.user.is_superuser:
+        return redirect('admin_dashboard')
+
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        content = request.POST.get('content')
+        expiry_date = request.POST.get('expiry_date')
+
+        Circular.objects.create(
+            title=title,
+            content=content,
+            expiry_date=expiry_date,
+            created_by=request.user
+        )
+
+        # 🔁 Stay on same page after publish
+        return redirect('admin_circulars')
+
+    circulars = Circular.objects.all().order_by('-created_at')
+
+    return render(
+        request,
+        'admin_circulars.html',
+        {'circulars': circulars}
+    )
+
+@login_required
+def admin_add_circular(request):
+    if not request.user.is_superuser:
+        return redirect('admin_dashboard')
+
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        content = request.POST.get('content')
+        expiry_date = request.POST.get('expiry_date')
+
+        Circular.objects.create(
+            title=title,
+            content=content,
+            expiry_date=expiry_date,
+            created_by=request.user
+        )
+
+        return redirect('admin_circulars')
+
+    return render(request, 'admin_add_circulars.html')
 
 @login_required
 def faculty_seating_view(request):

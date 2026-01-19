@@ -1,13 +1,32 @@
-<h1>Admin Dashboard</h1>
-<p>Welcome, Admin</p>
-<a href="/logout/">Logout</a>
-<h1>Admin Dashboard</h1>
+{% extends 'base.html' %}
 
-<ul>
-    <li><a href="/upload-students/">Upload Students (CSV)</a></li>
-    <li><a href="/trigger-seating/">Trigger Seating Allocation</a></li>
-    <li><a href="/admin/">Admin Panel</a></li>
-</ul>
+{% block title %}Admin Dashboard{% endblock %}
 
-<a href="/logout/">Logout</a>
-<li><a href="/allocate-seating/">Run Seating Allocation</a></li>
+{% block content %}
+<h2>Admin Control Center</h2>
+<p style="color:#64748B;">
+    Manage users, seating allocation, and system operations.
+</p>
+
+<div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:24px; margin-top:24px;">
+
+    <div class="card">
+        <h3>Upload Students</h3>
+        <p>Bulk upload student data using CSV.</p>
+        <a href="/upload-students/">Upload Students →</a>
+    </div>
+
+    <div class="card">
+        <h3>View Seating Plan</h3>
+        <p>Review room-wise seating allocation.</p>
+        <a href="{% url 'admin_seating' %}" class="card-link"> View Seating Plan →</a>
+    </div>
+
+    <div class="card">
+        <h3>Circulars</h3>
+        <p>Monitor announcements published by faculty.</p>
+        <a href="{% url 'admin_circulars' %}">Circulars →</a>
+    </div>
+
+</div>
+{% endblock %}

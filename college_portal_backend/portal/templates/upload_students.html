@@ -1,10 +1,46 @@
-<h2>Upload Students (CSV)</h2>
+{% extends 'base.html' %}
 
-<form method="post" enctype="multipart/form-data">
+{% block title %}Upload Students{% endblock %}
+
+{% block content %}
+<div style="
+    max-width: 800px;
+    margin: 0 auto;
+">
+    <div class="card">
+        <h2>Upload Students (CSV)</h2>
+        <p style="color:#64748B;">
+            Upload a CSV file containing student details for bulk registration.
+        </p>
+
+        <form method="post" enctype="multipart/form-data" style="margin-top: 24px;">
     {% csrf_token %}
-    <input type="file" name="file" required>
+
+    <label>Select CSV File</label>
+    <input type="file" name="file">
+
     <br><br>
-    <button type="submit">Upload</button>
+
+    <button type="submit">Upload Students</button>
 </form>
 
-<a href="/admin-dashboard/">Back to Dashboard</a>
+<hr style="margin: 32px 0; border-color:#2A2A2A;">
+
+<form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="generate_seating" value="1">
+    <button type="submit">Generate Seating Plan</button>
+</form>
+
+{% if message %}
+<p style="margin-top:16px; color:#22C55E;">{{ message }}</p>
+{% endif %}
+
+
+        <div style="margin-top: 24px;">
+            <a href="/admin-dashboard/">← Back to Dashboard</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
