@@ -3,6 +3,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .models import Student, Faculty, Marks, Circular, SeatingArrangement
 
+def home(request):
+    return render(request, 'home.html')
+
 def generate_seating_allocation():
     """
     Pure seating allocation logic.
@@ -32,20 +35,33 @@ def generate_seating_allocation():
 
 # LOGIN VIEW
 def login_view(request):
+    role = request.GET.get('role')  # admin / faculty / student
+
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
 
         user = authenticate(request, username=username, password=password)
 
-        if user is not None:
+        if user:
             login(request, user)
-            return redirect('dashboard')
+
+            if user.is_superuser:
+                return redirect('admin_dashboard')
+
+            elif hasattr(user, 'faculty'):
+                return redirect('faculty_dashboard')
+
+            elif hasattr(user, 'student'):
+                return redirect('student_dashboard')
+
         else:
-            return render(request, 'login.html', {'error': 'Invalid credentials'})
+            return render(request, 'login.html', {
+                'error': 'Invalid credentials',
+                'role': role
+            })
 
-    return render(request, 'login.html')
-
+    return render(request, 'login.html', {'role': role})
 
 # DASHBOARD REDIRECT (ROLE CHECK)
 @login_required

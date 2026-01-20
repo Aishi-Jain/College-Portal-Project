@@ -83,17 +83,89 @@
             color: #2563EB;
             text-decoration: none;
         }
+
+        .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 40px;
+    background: #0f3cc9;
+    color: white;
+}
+
+.navbar a {
+    color: white;
+    margin-left: 20px;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.logo {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropbtn {
+    background: transparent;
+    color: white;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: #1f1f1f;
+    min-width: 160px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    border-radius: 6px;
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: white;
+    padding: 12px 16px;
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background-color: #333;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
     </style>
 </head>
 <body>
-
-<div class="navbar">
-    <div><strong>College Portal</strong></div>
-    <div>
-        <a href="/dashboard/">Dashboard</a>
-        <a href="/logout/">Logout</a>
+    <nav class="navbar">
+    <div class="nav-left">
+        <span class="logo">College Portal</span>
     </div>
-</div>
+
+    <div class="nav-right">
+        <a href="{% url 'home' %}">Home</a>
+        <a href="#features">Features</a>
+        <a href="/dashboard/">Dashboard</a>
+
+        <div class="dropdown">
+            <button class="dropbtn">Login ▾</button>
+            <div class="dropdown-content">
+                <a href="{% url 'login' %}?role=admin">Admin</a>
+                <a href="{% url 'login' %}?role=faculty">Faculty</a>
+                <a href="{% url 'login' %}?role=student">Student</a>
+            </div>
+        </div>
+    </div>
+</nav>
 
 <div class="container">
     {% block content %}{% endblock %}
