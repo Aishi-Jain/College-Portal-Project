@@ -76,8 +76,12 @@ WSGI_APPLICATION = 'college_portal_backend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'academicsphere',
+        'USER': 'root',
+        'PASSWORD': '13170489',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
     }
 }
 

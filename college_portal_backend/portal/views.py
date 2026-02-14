@@ -35,7 +35,15 @@ def generate_seating_allocation():
 
 # LOGIN VIEW
 def login_view(request):
-    role = request.GET.get('role')  # admin / faculty / student
+    role = request.GET.get('role', 'user')
+
+    title_map = {
+        'admin': 'Admin Login',
+        'faculty': 'Faculty Login',
+        'student': 'Student Login',
+    }
+
+    title = title_map.get(role, 'Login')
 
     if request.method == 'POST':
         username = request.POST['username']
@@ -61,7 +69,10 @@ def login_view(request):
                 'role': role
             })
 
-    return render(request, 'login.html', {'role': role})
+    return render(request, 'login.html', {
+        'title': title,
+        'role': role
+    })
 
 # DASHBOARD REDIRECT (ROLE CHECK)
 @login_required
