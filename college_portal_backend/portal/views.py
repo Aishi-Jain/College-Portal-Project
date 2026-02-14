@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from .models import Student, Faculty, Marks, Circular, SeatingArrangement
+from .models import Student, Faculty, Marks, Circular, SeatingAllocation, Department, Subject, Exam, Classroom
 
 def home(request):
     return render(request, 'home.html')
@@ -11,7 +11,7 @@ def generate_seating_allocation():
     Pure seating allocation logic.
     NO request, NO decorators.
     """
-    SeatingArrangement.objects.all().delete()
+    SeatingAllocation.objects.all().delete()
 
     students = Student.objects.order_by('roll_number')
     classrooms = Classroom.objects.all().order_by('room_number')
@@ -24,7 +24,7 @@ def generate_seating_allocation():
             if student_index >= students.count():
                 return
 
-            SeatingArrangement.objects.create(
+            SeatingAllocation.objects.create(
                 classroom=classroom,
                 student=students[student_index],
                 seat_number=seat
@@ -221,7 +221,7 @@ def roll_sort_key(roll):
     return (1, ord(letter), digit)
 
 
-from .models import Student, Classroom, SeatingArrangement
+from .models import Student, Classroom, SeatingAllocation
 from django.http import HttpResponse
 from django.db import transaction
 
@@ -236,7 +236,7 @@ def allocate_seating(request):
     # Sort students using custom roll logic
     students.sort(key=lambda s: roll_sort_key(s.roll_number))
 
-    SeatingArrangement.objects.all().delete()  # clear old allocations
+    SeatingAllocation.objects.all().delete()  # clear old allocations
 
     student_index = 0
 
@@ -246,7 +246,7 @@ def allocate_seating(request):
                 if student_index >= len(students):
                     break
 
-                SeatingArrangement.objects.create(
+                SeatingAllocation.objects.create(
                     student=students[student_index],
                     classroom=classroom,
                     seat_number=seat
@@ -256,14 +256,14 @@ def allocate_seating(request):
 
     return HttpResponse("Seating Allocation Completed Successfully")
 
-from .models import SeatingArrangement
+from .models import SeatingAllocation
 
 @login_required
 def admin_seating_view(request):
     if not request.user.is_superuser:
         return redirect('login')
 
-    allocations = SeatingArrangement.objects.select_related(
+    allocations = SeatingAllocation.objects.select_related(
         'student', 'classroom'
     ).order_by('classroom__room_number', 'seat_number')
 
@@ -326,7 +326,7 @@ def faculty_seating_view(request):
     if not hasattr(request.user, 'faculty'):
         return redirect('login')
 
-    allocations = SeatingArrangement.objects.select_related(
+    allocations = SeatingAllocation.objects.select_related(
         'student', 'classroom'
     ).order_by('classroom__room_number', 'seat_number')
 
@@ -412,7 +412,7 @@ def student_seating_view(request):
     if not hasattr(request.user, 'student'):
         return redirect('login')
 
-    allocation = SeatingArrangement.objects.filter(
+    allocation = SeatingAllocation.objects.filter(
         student=request.user.student
     ).first()
 
