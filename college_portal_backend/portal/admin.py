@@ -1,9 +1,13 @@
 from django.contrib import admin
-from .models import Student, Faculty, Circular, Classroom, Marks, SeatingArrangement
+from .models import *
 
+admin.site.register(Department)
 admin.site.register(Student)
 admin.site.register(Faculty)
-admin.site.register(Circular)
+admin.site.register(Subject)
+admin.site.register(Exam)
 admin.site.register(Classroom)
+admin.site.register(SeatingAllocation)
 admin.site.register(Marks)
-admin.site.register(SeatingArrangement)
+admin.site.register(Circular)
+
